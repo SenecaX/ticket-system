@@ -14,6 +14,14 @@ import {
   ErrorInterceptor
 } from './shared/interceptor';
 import { AlertComponent } from './shared/components/alert/alert.component';
+import { JwtModule } from '@auth0/angular-jwt';
+import { CommonModule } from '@angular/common';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
 
 @NgModule({
   declarations: [
@@ -27,7 +35,16 @@ import { AlertComponent } from './shared/components/alert/alert.component';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    CommonModule,
+    DragDropModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        whitelistedDomains: ['http://localhost:3000/', 'http://localhost:3001/']
+      }
+    }),
+    FontAwesomeModule
   ],
   providers: [
     TicketHttpInterceptor,

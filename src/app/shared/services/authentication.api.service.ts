@@ -7,11 +7,12 @@ import { map } from 'rxjs/operators';
 export class AuthenticationService {
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
+  public decodedToken: any;
 
   constructor(private readonly http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<any>(
-      JSON.parse(localStorage.getItem('currentUser'))
-    );
+    const retrievedToken = JSON.parse(localStorage.getItem('access_token'));
+
+    this.currentUserSubject = new BehaviorSubject<any>(retrievedToken);
 
     this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -28,7 +29,7 @@ export class AuthenticationService {
       })
       .pipe(
         map(user => {
-          localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('access_token', JSON.stringify(user));
           this.currentUserSubject.next(user);
           return user;
         })
@@ -36,7 +37,7 @@ export class AuthenticationService {
   }
 
   public logout() {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem('access_token');
     this.currentUserSubject.next(null);
   }
 }

@@ -1,2 +1,81 @@
-<h1>Hi {{ currentUser.firstName }}!</h1>
-<p>You're logged in Ticket-System!!</p>
+<div class="board-bar mb-5">
+  <p class="board-name">Board Name</p>
+</div>
+
+<div class="board-wrapper">
+  <div class="board-columns" cdkDropListGroup>
+    <div
+      class="board-column"
+      *ngFor="let column of board.columns; let i = index"
+    >
+      <div class="mb-3">
+        <p class="column-title mt-3">
+          {{ column.name
+          }}<fa-icon
+            [icon]="faPlus"
+            (click)="addTask()"
+            class="add-icon"
+          ></fa-icon>
+        </p>
+      </div>
+
+      <!-- add task name -->
+      <div *ngIf="addTaskName" class="tasks-container">
+        <div class="task" cdkDrag [cdkDragData]="draggedTask">
+          <textarea
+            name="task"
+            id="task"
+            cols="30"
+            rows="10"
+            value="task"
+            #newTask
+          ></textarea>
+          <span
+            ><fa-icon
+              [icon]="faCheck"
+              (click)="saveTask(newTask.value, i)"
+            ></fa-icon>
+          </span>
+        </div>
+      </div>
+
+      <div
+        class="tasks-container"
+        cdkDropList
+        [cdkDropListData]="column.tasks"
+        (cdkDropListDropped)="drop($event)"
+      >
+        <div
+          class="task"
+          *ngFor="let item of column.tasks"
+          cdkDrag
+          [cdkDragData]="draggedTask"
+        >
+          <textarea
+            name="task"
+            id="task"
+            cols="30"
+            rows="10"
+            *ngIf="editTaskName"
+            value="item.taskName"
+          ></textarea>
+          <span *ngIf="!editTaskName">{{ item.taskName }}</span>
+
+          <span
+            ><fa-icon
+              [icon]="faEdit"
+              (click)="editTask(item)"
+              *ngIf="!saveEdit"
+            ></fa-icon>
+            <fa-icon
+              [icon]="faCheck"
+              *ngIf="saveEdit"
+              (click)="editTask(item)"
+            ></fa-icon>
+            <fa-icon [icon]="faTimes" (click)="deleteTask(item)"></fa-icon
+          ></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

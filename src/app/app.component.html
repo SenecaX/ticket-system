@@ -1,14 +1,14 @@
 <!-- nav -->
 <nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="currentUser">
   <div class="navbar-nav">
-    <a class="nav-item nav-link" routerLink="/">Home</a>
-    <a class="nav-item nav-link" (click)="logout()">Logout</a>
+    <a class="nav-item nav-link" routerLink="/dashboard">Dashboard</a>
+    <a class="nav-item nav-link pull-right" (click)="logout()">Logout</a>
   </div>
 </nav>
 
 <!-- main content container -->
 <div>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
       <div class="col-sm-8 offset-sm-2">
         <app-alert></app-alert>
