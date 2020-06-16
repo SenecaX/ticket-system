@@ -43,6 +43,9 @@ export class DashboardComponent implements OnInit {
   public faPlus = faPlus;
   public faCheck = faCheck;
 
+  public currentAddIndex: any = -1;
+  public currentEditTaskId: any = null;
+
   constructor(private readonly taskService: TaskService) {
     const helper = new JwtHelperService();
     const getToken = localStorage.getItem('access_token');
@@ -84,7 +87,8 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  public addTask(): void {
+  public addTask(i): void {
+    this.currentAddIndex = i;
     this.addTaskName = true;
   }
 
@@ -98,6 +102,7 @@ export class DashboardComponent implements OnInit {
     this.taskService.createTask(task).subscribe(tasks => {
       this.addTaskName = false;
       this.getTask();
+      this.currentAddIndex = -1;
     });
   }
 
@@ -118,6 +123,9 @@ export class DashboardComponent implements OnInit {
 
   public editTask(task): void {
     console.log('edit', task);
+
+    this.currentEditTaskId = task._id;
+
     this.saveEdit = true;
     this.editTaskName = true;
 

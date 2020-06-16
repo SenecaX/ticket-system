@@ -13,14 +13,14 @@
           {{ column.name
           }}<fa-icon
             [icon]="faPlus"
-            (click)="addTask()"
+            (click)="addTask(i)"
             class="add-icon"
           ></fa-icon>
         </p>
       </div>
 
       <!-- add task name -->
-      <div *ngIf="addTaskName" class="tasks-container">
+      <div *ngIf="addTaskName && currentAddIndex === i" class="tasks-container">
         <div class="task" cdkDrag [cdkDragData]="draggedTask">
           <textarea
             name="task"
@@ -56,22 +56,16 @@
             id="task"
             cols="30"
             rows="10"
-            *ngIf="editTaskName"
+            *ngIf="editTaskName && currentEditTaskId === item._id"
             value="item.taskName"
           ></textarea>
-          <span *ngIf="!editTaskName">{{ item.taskName }}</span>
+          <!-- <span *ngIf="!editTaskName">{{ item.taskName }}</span> -->
+          <span *ngIf="!editTaskName && currentEditTaskId !== item._id">{{
+            item.taskName
+          }}</span>
 
           <span
-            ><fa-icon
-              [icon]="faEdit"
-              (click)="editTask(item)"
-              *ngIf="!saveEdit"
-            ></fa-icon>
-            <fa-icon
-              [icon]="faCheck"
-              *ngIf="saveEdit"
-              (click)="editTask(item)"
-            ></fa-icon>
+            ><fa-icon [icon]="faEdit" (click)="editTask(item)"></fa-icon>
             <fa-icon [icon]="faTimes" (click)="deleteTask(item)"></fa-icon
           ></span>
         </div>
