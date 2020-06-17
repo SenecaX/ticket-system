@@ -14,7 +14,7 @@ export class TaskService {
     })
   };
 
-  getTasks(userId: String) {
+  getTasks(userId: string) {
     return this.http.get('http://localhost:3001/api/task/' + userId);
   }
 

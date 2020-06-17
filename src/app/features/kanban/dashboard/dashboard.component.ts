@@ -33,28 +33,26 @@ export class DashboardComponent implements OnInit {
   public editTaskName: boolean;
   public addTaskName: boolean;
   public saveEdit: boolean;
+  public containerEmpty: boolean;
 
-  //icons
+  public currentAddIndex = -1;
+  public currentEditTaskId = null;
+  public changeName = '';
+  public errorMsg = '';
+
+  // icons
   public faTimes = faTimes;
   public faEdit = faEdit;
   public faPlus = faPlus;
   public faCheck = faCheck;
   public faDumpster = faDumpster;
 
-  public currentAddIndex: any = -1;
-  public currentEditTaskId: any = null;
-  public containerEmpty: boolean;
-  public currentData: any = null;
-  public changeName: string = '';
-  public testValue: string;
-  public errorMsg: string = '';
-
   constructor(private readonly taskService: TaskService) {
     const helper = new JwtHelperService();
     const getToken = localStorage.getItem('access_token');
     this.decodedToken = helper.decodeToken(getToken);
 
-    //columns
+    // columns
     this.todo = [];
     this.done = [];
     this.progress = [];
@@ -75,7 +73,7 @@ export class DashboardComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>, columnIndex) {
     if (event.previousContainer === event.container) {
-      let task: Task = event.item.data;
+      const task: Task = event.item.data;
       moveItemInArray(
         event.container.data,
         event.previousIndex,
@@ -84,7 +82,7 @@ export class DashboardComponent implements OnInit {
       task.status = columnIndex;
       this.taskService.updateTask(task).subscribe(el => {});
     } else {
-      let task: Task = event.item.data;
+      const task: Task = event.item.data;
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -108,8 +106,8 @@ export class DashboardComponent implements OnInit {
   }
 
   public saveTask(item, status): void {
-    let task: Task = {
-      status: status,
+    const task: Task = {
+      status,
       taskName: item,
       userId: this.decodedToken._id
     };

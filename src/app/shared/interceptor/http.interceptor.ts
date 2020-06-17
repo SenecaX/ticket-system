@@ -28,10 +28,9 @@ export class TicketHttpInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     const { url, method, headers, body } = request;
 
-    // wrap in delayed observable to simulate server api call
     return of(null)
       .pipe(mergeMap(handleRoute))
-      .pipe(materialize()) // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648)
+      .pipe(materialize())
       .pipe(delay(500))
       .pipe(dematerialize());
 
@@ -44,17 +43,16 @@ export class TicketHttpInterceptor implements HttpInterceptor {
         case url.match(/\/users\/\d+$/) && method === 'DELETE':
           return deleteUser();
         default:
-          // pass through any requests not handled above
           return next.handle(request);
       }
     }
 
-    // route functions
-
     function authenticate() {
       const { name, password } = body;
       const user = users.find(x => x.name === name && x.password === password);
-      if (!user) return error('Username or password is incorrect');
+      if (!user) {
+        return error('Username or password is incorrect');
+      }
       return ok({
         id: user.id,
         name: user.name,
@@ -65,12 +63,16 @@ export class TicketHttpInterceptor implements HttpInterceptor {
     }
 
     function getUsers() {
-      if (!isLoggedIn()) return unauthorized();
+      if (!isLoggedIn()) {
+        return unauthorized();
+      }
       return ok(users);
     }
 
     function deleteUser() {
-      if (!isLoggedIn()) return unauthorized();
+      if (!isLoggedIn()) {
+        return unauthorized();
+      }
 
       users = users.filter(x => x.id !== idFromUrl());
       localStorage.setItem('users', JSON.stringify(users));
@@ -117,7 +119,6 @@ export class TicketHttpInterceptor implements HttpInterceptor {
 }
 
 export const ticketHttpProvider = {
-  // use fake backend in place of Http service for backend-less development
   provide: HTTP_INTERCEPTORS,
   useClass: TicketHttpInterceptor,
   multi: true

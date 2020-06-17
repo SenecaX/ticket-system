@@ -65,7 +65,7 @@
                 *ngIf="editTaskName && currentEditTaskId === item._id"
                 #editing
                 (change)="changeName = $event.target.value"
-                ([ngModel])="(changeName)"
+                ([ngModel])="changeName"
               ></textarea>
               <span *ngIf="!editTaskName || currentEditTaskId !== item._id">{{
                 item.taskName

@@ -1,6 +1,6 @@
 export class Task {
-  _id?: String;
-  taskName: String;
-  userId: String;
-  status: Number;
+  _id?: string;
+  taskName: string;
+  userId: string;
+  status: number;
 }
