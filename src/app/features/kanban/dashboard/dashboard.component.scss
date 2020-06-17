@@ -8,14 +8,12 @@
 }
 
 .board-bar {
-  background: rgba(gray, 0.5);
   padding: 8px 15px;
 }
 
 .board-name {
   font-size: 20px;
   font-weight: bold;
-  color: white;
 }
 
 .board-wrapper {
@@ -27,6 +25,7 @@
 .board-columns {
   display: flex;
   flex-grow: 1;
+  // background: #34495e;
 }
 
 .board-column {
@@ -41,7 +40,7 @@
   // padding: 25px;
 
   border-radius: 4px;
-  background: rgba(red, 0.5);
+  background: #95a5a6;
 
   &:not(:first-child) {
     margin-left: 0;
@@ -54,6 +53,7 @@
   text-transform: uppercase;
   margin-bottom: 20px;
   text-align: center;
+  color: white;
 }
 
 .task-container {
@@ -66,9 +66,10 @@
   background: white;
   border-bottom: solid 1px #ddd;
   border-radius: 4px;
-  height: 20vh;
+  min-height: 10vh;
   width: 18vw;
   margin-left: 0.7em;
+  cursor: pointer;
 
   margin-bottom: 15px;
 
@@ -95,4 +96,13 @@
 .add-icon {
   padding-left: 0.5em;
   color: white;
+}
+
+.cursor-style {
+  cursor: pointer;
+}
+
+.error {
+  font-size: small;
+  color: red;
 }

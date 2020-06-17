@@ -1,5 +1,5 @@
-<div class="board-bar mb-5">
-  <p class="board-name">Board Name</p>
+<div class="board-bar">
+  <p class="board-name text-center pt-5">Kanban Board</p>
 </div>
 
 <div class="board-wrapper">
@@ -14,7 +14,7 @@
           }}<fa-icon
             [icon]="faPlus"
             (click)="addTask(i)"
-            class="add-icon"
+            class="add-icon cursor-style"
           ></fa-icon>
         </p>
       </div>
@@ -26,7 +26,7 @@
             name="task"
             id="task"
             cols="30"
-            rows="10"
+            rows="2"
             value="task"
             #newTask
           ></textarea>
@@ -35,39 +35,71 @@
               [icon]="faCheck"
               (click)="saveTask(newTask.value, i)"
             ></fa-icon>
+            <fa-icon [icon]="faTimes" (click)="cancelAdd()"></fa-icon>
           </span>
         </div>
+        <div class="error" *ngIf="errorMsg !== ''">{{ errorMsg }}</div>
       </div>
 
       <div
         class="tasks-container"
         cdkDropList
         [cdkDropListData]="column.tasks"
-        (cdkDropListDropped)="drop($event)"
+        (cdkDropListDropped)="drop($event, i)"
       >
+        <p style="padding-top: 100px;" *ngIf="column.tasks.length === 0">.</p>
         <div
           class="task"
           *ngFor="let item of column.tasks"
           cdkDrag
-          [cdkDragData]="draggedTask"
+          [cdkDragData]="item"
         >
-          <textarea
-            name="task"
-            id="task"
-            cols="30"
-            rows="10"
-            *ngIf="editTaskName && currentEditTaskId === item._id"
-            value="item.taskName"
-          ></textarea>
-          <!-- <span *ngIf="!editTaskName">{{ item.taskName }}</span> -->
-          <span *ngIf="!editTaskName && currentEditTaskId !== item._id">{{
-            item.taskName
-          }}</span>
+          <!--  w-100 d-flex justify-content-between -->
+          <div class="w-100 d-flex justify-content-between">
+            <div>
+              <textarea
+                name="task"
+                id="task"
+                cols="30"
+                rows="2"
+                *ngIf="editTaskName && currentEditTaskId === item._id"
+                #editing
+                (change)="changeName = $event.target.value"
+                ([ngModel])="(changeName)"
+              ></textarea>
+              <span *ngIf="!editTaskName || currentEditTaskId !== item._id">{{
+                item.taskName
+              }}</span>
+            </div>
 
-          <span
-            ><fa-icon [icon]="faEdit" (click)="editTask(item)"></fa-icon>
-            <fa-icon [icon]="faTimes" (click)="deleteTask(item)"></fa-icon
-          ></span>
+            <div>
+              <span
+                ><fa-icon
+                  class="pr-2"
+                  [icon]="faEdit"
+                  (click)="editTask(item)"
+                  *ngIf="!editTaskName"
+                ></fa-icon>
+                <fa-icon
+                  class="pl-2"
+                  [icon]="faCheck"
+                  (click)="editTask(item, changeName)"
+                  *ngIf="editTaskName && currentEditTaskId === item._id"
+                ></fa-icon>
+                <fa-icon
+                  class="pl-2"
+                  [icon]="faTimes"
+                  (click)="cancelTask()"
+                  *ngIf="editTaskName && currentEditTaskId === item._id"
+                ></fa-icon>
+                <fa-icon
+                  [icon]="faDumpster"
+                  (click)="deleteTask(item)"
+                  *ngIf="!editTaskName"
+                ></fa-icon>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

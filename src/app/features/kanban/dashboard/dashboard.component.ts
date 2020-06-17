@@ -2,11 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
-  transferArrayItem,
-  CdkDragExit,
-  CdkDragEnter,
-  CdkDragEnd,
-  CdkDragStart
+  transferArrayItem
 } from '@angular/cdk/drag-drop';
 import { TaskService } from 'src/app/shared/services/task.service.api';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -16,7 +12,8 @@ import {
   faTimes,
   faEdit,
   faPlus,
-  faCheck
+  faCheck,
+  faDumpster
 } from '@fortawesome/free-solid-svg-icons';
 import { Task } from 'src/app/shared/models/task';
 
@@ -42,9 +39,15 @@ export class DashboardComponent implements OnInit {
   public faEdit = faEdit;
   public faPlus = faPlus;
   public faCheck = faCheck;
+  public faDumpster = faDumpster;
 
   public currentAddIndex: any = -1;
   public currentEditTaskId: any = null;
+  public containerEmpty: boolean;
+  public currentData: any = null;
+  public changeName: string = '';
+  public testValue: string;
+  public errorMsg: string = '';
 
   constructor(private readonly taskService: TaskService) {
     const helper = new JwtHelperService();
@@ -70,20 +73,26 @@ export class DashboardComponent implements OnInit {
     this.getTask();
   }
 
-  drop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<string[]>, columnIndex) {
     if (event.previousContainer === event.container) {
+      let task: Task = event.item.data;
       moveItemInArray(
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
+      task.status = columnIndex;
+      this.taskService.updateTask(task).subscribe(el => {});
     } else {
+      let task: Task = event.item.data;
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
+      task.status = columnIndex;
+      this.taskService.updateTask(task).subscribe(el => {});
     }
   }
 
@@ -92,23 +101,34 @@ export class DashboardComponent implements OnInit {
     this.addTaskName = true;
   }
 
+  public cancelAdd(): void {
+    this.addTaskName = false;
+    console.log('entere');
+    this.getTask();
+  }
+
   public saveTask(item, status): void {
-    console.log('item', item);
     let task: Task = {
       status: status,
       taskName: item,
       userId: this.decodedToken._id
     };
-    this.taskService.createTask(task).subscribe(tasks => {
-      this.addTaskName = false;
-      this.getTask();
-      this.currentAddIndex = -1;
-    });
+    this.taskService.createTask(task).subscribe(
+      tasks => {
+        this.addTaskName = false;
+        this.getTask();
+        this.currentAddIndex = -1;
+      },
+      err => (this.errorMsg = 'Task name is required')
+    );
   }
 
   public getTask(): void {
     this.taskService.getTasks(this.decodedToken._id).subscribe(tasks => {
       this.tasks = tasks;
+      this.todo = [];
+      this.done = [];
+      this.progress = [];
       this.tasks.forEach(element => {
         if (element.status === 0) {
           this.todo.push(element);
@@ -117,22 +137,45 @@ export class DashboardComponent implements OnInit {
         } else {
           this.done.push(element);
         }
+
+        if (this.todo.length === 0) {
+          this.containerEmpty = true;
+        } else if (this.done.length === 0) {
+          this.containerEmpty = true;
+        } else if (this.progress.length === 0) {
+          this.containerEmpty = true;
+        }
       });
+      this.board = new Board('Test board', [
+        new Column('Todo', this.todo),
+        new Column('In Progress', this.progress),
+        new Column('Done', this.done)
+      ]);
     });
   }
 
-  public editTask(task): void {
-    console.log('edit', task);
+  public cancelTask(): void {
+    this.getTask();
+    this.editTaskName = false;
+  }
 
+  public editTask(task, name?): void {
+    this.changeName = task.taskName;
     this.currentEditTaskId = task._id;
-
     this.saveEdit = true;
     this.editTaskName = true;
+    task.taskName = name;
 
-    this.taskService.updateTask(task).subscribe(data => {
-      this.getTask();
-      this.saveEdit = false;
-    });
+    if (name) {
+      this.taskService.updateTask(task).subscribe(data => {
+        this.todo = [];
+        this.progress = [];
+        this.done = [];
+        this.editTaskName = false;
+        this.getTask();
+        this.saveEdit = false;
+      });
+    }
   }
 
   public deleteTask(task): void {

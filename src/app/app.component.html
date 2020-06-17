@@ -1,8 +1,8 @@
 <!-- nav -->
 <nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="currentUser">
-  <div class="navbar-nav">
+  <div class="navbar-nav w-100 d-flex justify-content-between">
     <a class="nav-item nav-link" routerLink="/dashboard">Dashboard</a>
-    <a class="nav-item nav-link pull-right" (click)="logout()">Logout</a>
+    <a class="nav-item nav-link cursor-type" (click)="logout()">Logout</a>
   </div>
 </nav>
 

@@ -19,9 +19,22 @@ export class TaskService {
   }
 
   createTask(task: Task) {
-    console.log('tasking', task);
     return this.http.post('http://localhost:3001/api/task/', task);
-    //   .pipe(map((response: any) => response.json()));
+  }
+
+  updateStatus(task: Task): Observable<Task> {
+    console.log('entered');
+    this.httpOptions.headers.set(
+      'Access-Control-Allow-Methods',
+      'GET, POST, OPTIONS, PUT, DELETE'
+    );
+    return this.http
+      .put<Task>(
+        'http://localhost:3001/api/task/updateStatus/' + task._id,
+        task,
+        this.httpOptions
+      )
+      .pipe(catchError(this.errorHandler));
   }
 
   deleteTask(task: Task): Observable<Task> {
@@ -29,7 +42,6 @@ export class TaskService {
       'Access-Control-Allow-Methods',
       'GET, POST, OPTIONS, PUT, DELETE'
     );
-    console.log('con', task);
     return this.http
       .delete<Task>(
         'http://localhost:3001/api/task/' + task._id,
@@ -38,8 +50,19 @@ export class TaskService {
       .pipe(catchError(this.errorHandler));
   }
 
-  updateTask(task: Task) {
-    return this.http.put('http://localhost:3001/api/task/', task);
+  updateTask(task: Task): Observable<Task> {
+    console.log('entered');
+    this.httpOptions.headers.set(
+      'Access-Control-Allow-Methods',
+      'GET, POST, OPTIONS, PUT, DELETE'
+    );
+    return this.http
+      .put<Task>(
+        'http://localhost:3001/api/task/' + task._id,
+        task,
+        this.httpOptions
+      )
+      .pipe(catchError(this.errorHandler));
   }
 
   errorHandler(error) {
@@ -51,7 +74,6 @@ export class TaskService {
       // Get server-side error
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
-    console.log(errorMessage);
     return throwError(errorMessage);
   }
 }
